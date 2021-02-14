@@ -25,9 +25,10 @@ if ( isset($_GET['success'])) {
     <h2>Please choose your desired action</h2>
 
     <form action="crud-form.php" method="post" class="form-inline">
-        <label for="crud-actions">Choose a function:</label>
+        <label for="crud-action">Choose a function:</label>
+        <input type="hidden" name="admin-val" value="admin">
 
-        <select name="crud-actions" id="crud-actions">
+        <select name="crud-action" id="crud-action">
             <option value="create">Create</option>
             <option value="read">Read</option>
             <option value="update">Update</option>

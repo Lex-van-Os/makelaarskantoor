@@ -10,6 +10,15 @@
 <header>
     <?php
     include "import-files.php";
+    include "helper-functions.php";
+
+    if (isset($_POST['submit'])) {
+        if (filter_has_var(INPUT_POST, 'woonwijk')) {
+            header('location: crud-actions.php');
+        } else {
+            echo '<script>alert("Voer aub een geldige woonwijk in");</script>';
+        }
+    }
     //    include "crud-actions.php";
     //    OpenCon();
     //    Ghouse();
@@ -36,13 +45,14 @@
             </ul>
 
             <div class="zoek-input">
-                <form action="crud-actions.php" method="post">
+                <!--                <form action="crud-actions.php" method="post">-->
+                <form name="woonwijkform" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                     <input type='hidden' id='crud-auth' name='crud-auth' value='crud-auth'>
                     <input type="hidden" name="get-houses" id="get-houses" value="true">
                     <label class="sr-only" for="inlineFormInputName2">Name</label>
                     <input type="text" class="form-control mb-2 mr-sm-2" name="woonwijk" id="inlineFormInputName2"
                            placeholder="Zoek op woonwijk...">
-                    <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                    <button name="submit" type="submit" class="btn btn-primary mb-2">Submit</button>
                 </form>
             </div>
         </div>

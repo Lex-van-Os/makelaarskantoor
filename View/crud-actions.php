@@ -19,15 +19,16 @@ ini_set('display_errors', 1);
 if (isset($_POST['crud-auth'])) {
     if (isset($_POST['crud-action']) && $_POST['crud-action'] == 'create') {
         Chouse();
-    }
-    else if (isset($_POST['crud-action']) && $_POST['crud-action'] == 'update') {
+    } else if (isset($_POST['crud-action']) && $_POST['crud-action'] == 'update') {
         Gupdate($_POST['house-id']);
-    }
-
-    else if (isset($_POST['crud-action']) && $_POST['crud-action'] == 'delete') {
-        Dhouse($_POST['house-id']);
-    }
-    else if ($_POST['get-houses'] == 'true') {
+    } else if (isset($_POST['crud-action']) && $_POST['crud-action'] == 'delete') {
+        if (empty($_POST['house-id'])) {
+            $url = $_COOKIE['url'];
+            header("location:$url");
+        } else {
+            Dhouse($_POST['house-id']);
+        }
+    } else if ($_POST['get-houses'] == 'true') {
         Gwoonwijk();
     }
 }
@@ -164,6 +165,7 @@ function Uhouse()
 
 function Dhouse($idhouse)
 {
+    print("Dhouse");
     require_once 'DBConnect.php';
     $dbsettings = getSettings();
 
@@ -190,9 +192,14 @@ function Dhouse($idhouse)
     die();
 }
 
-function Gwoonwijk() {
+function Gwoonwijk()
+{
     $woonwijk = $_POST['woonwijk'];
-    var_dump($woonwijk);
+    if(substr($woonwijk, 0) != "'" || '"'){
+        include('helper-functions.php');
+        $woonwijk = wrap($woonwijk);
+    }
+
     require_once 'DBConnect.php';
     $redirect_result = '';
     $dbsettings = getSettings();
@@ -204,28 +211,24 @@ function Gwoonwijk() {
         die("Connection failed: " . $conn->connect_error);
     }
 
-    $sql = ("SELECT idwoonwijk FROM woonwijk WHERE naam = ?");
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("s", $woonwijk);
-        $stmt->execute();
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-
-        } else {
-            echo "0 results";
+//    $sql = ("SELECT idwoonwijk FROM woonwijk WHERE naam = ?");
+    $sql = "SELECT idwoonwijk FROM woonwijk WHERE naam = $woonwijk";
+    echo $sql;
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            echo $row['idwoonwijk'];
         }
-        header("location: admin.php?success=1");
     } else {
-        echo '<script type="text/javascript">alert("No results found")</script>';
-        $error = $conn->errno . ' ' . $conn->error;
-        echo $error; // 1054 Unknown column 'foo' in 'field list'
-        $stmt->close();
-        $conn->close();
+        echo "0 results";
     }
+
+    $conn->close();
     die();
 }
 
-function GhouseWhere() {
+function GhouseWhere()
+{
 
 }
 
